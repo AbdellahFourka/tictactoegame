@@ -1,10 +1,16 @@
 const cells = document.querySelectorAll('[data-cell]');
 const statusElement = document.getElementById('status');
 const restartButton = document.getElementById('restart');
+const difficultySelect = document.getElementById('difficulty');
 
 let board = ['', '', '', '', '', '', '', '', ''];
 let currentPlayer = 'X';
 let gameOver = false;
+let difficulty = 'medium'; // Default difficulty
+
+difficultySelect.addEventListener('change', () => {
+    difficulty = difficultySelect.value;
+});
 
 function checkWinner() {
     const winPatterns = [
@@ -37,7 +43,7 @@ function handleClick(event) {
     
     board[index] = currentPlayer;
     cell.classList.add(currentPlayer.toLowerCase());
-    cell.textContent = currentPlayer; // Add this line to set the text content
+    cell.textContent = currentPlayer;
     
     const winner = checkWinner();
     
@@ -90,17 +96,26 @@ function minimax(board, depth, isMaximizing) {
 }
 
 function aiMove() {
-    let bestScore = -Infinity;
+    let bestScore;
     let bestMove = null;
 
-    for (let i = 0; i < board.length; i++) {
-        if (board[i] === '') {
-            board[i] = 'O';
-            const score = minimax(board, 0, false);
-            board[i] = '';
-            if (score > bestScore) {
-                bestScore = score;
-                bestMove = i;
+    if (difficulty === 'easy') {
+        // Random move for easy difficulty
+        let availableMoves = board.map((cell, index) => cell === '' ? index : null).filter(index => index !== null);
+        bestMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    } else {
+        // Minimax algorithm for medium and hard difficulties
+        bestScore = difficulty === 'medium' ? 0 : -Infinity;
+        for (let i = 0; i < board.length; i++) {
+            if (board[i] === '') {
+                board[i] = 'O';
+                const score = minimax(board, 0, false);
+                board[i] = '';
+                if ((difficulty === 'medium' && score >= bestScore) || 
+                    (difficulty === 'hard' && score > bestScore)) {
+                    bestScore = score;
+                    bestMove = i;
+                }
             }
         }
     }
@@ -108,7 +123,7 @@ function aiMove() {
     if (bestMove !== null) {
         board[bestMove] = 'O';
         cells[bestMove].classList.add('o');
-        cells[bestMove].textContent = 'O'; // Add this line to set the text content
+        cells[bestMove].textContent = 'O';
         
         const winner = checkWinner();
         
@@ -132,7 +147,7 @@ function restartGame() {
     gameOver = false;
     cells.forEach(cell => {
         cell.classList.remove('x', 'o');
-        cell.textContent = ''; // Clear text content
+        cell.textContent = '';
     });
     statusElement.textContent = '';
 }
