@@ -37,6 +37,7 @@ function handleClick(event) {
     
     board[index] = currentPlayer;
     cell.classList.add(currentPlayer.toLowerCase());
+    cell.textContent = currentPlayer; // Add this line to set the text content
     
     const winner = checkWinner();
     
@@ -107,6 +108,7 @@ function aiMove() {
     if (bestMove !== null) {
         board[bestMove] = 'O';
         cells[bestMove].classList.add('o');
+        cells[bestMove].textContent = 'O'; // Add this line to set the text content
         
         const winner = checkWinner();
         
@@ -128,7 +130,10 @@ function restartGame() {
     board = ['', '', '', '', '', '', '', '', ''];
     currentPlayer = 'X';
     gameOver = false;
-    cells.forEach(cell => cell.classList.remove('x', 'o'));
+    cells.forEach(cell => {
+        cell.classList.remove('x', 'o');
+        cell.textContent = ''; // Clear text content
+    });
     statusElement.textContent = '';
 }
 
