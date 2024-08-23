@@ -104,7 +104,6 @@ function aiMove() {
         let availableMoves = board.map((cell, index) => cell === '' ? index : null).filter(index => index !== null);
         bestMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
     } else {
-        // Minimax algorithm for medium and hard difficulties
         bestScore = difficulty === 'medium' ? 0 : -Infinity;
         for (let i = 0; i < board.length; i++) {
             if (board[i] === '') {
